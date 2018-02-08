@@ -31,7 +31,8 @@ var serveGzip = func(w http.ResponseWriter, r *http.Request, c martini.Context, 
 	headers.Set(HeaderContentEncoding, "gzip")
 	headers.Set(HeaderVary, HeaderAcceptEncoding)
 
-	gz := gzip.NewWriter(w)
+	gz := getGzip(w)
+	defer putGzip(gz)
 	defer gz.Close()
 
 	gzw := gzipResponseWriter{gz, w.(martini.ResponseWriter)}
@@ -59,12 +60,12 @@ func All(options ...Options) martini.Handler {
 
 func prepareOptions(options []Options) Options {
 	var opt Options
-        if len(options) > 0 {
-                opt = options[0]
-        }
-        if !isCompressionLevelValid(opt.CompressionLevel) {
-                opt.CompressionLevel = DefaultCompression
-        }
+	if len(options) > 0 {
+		opt = options[0]
+	}
+	if !isCompressionLevelValid(opt.CompressionLevel) {
+		opt.CompressionLevel = DefaultCompression
+	}
 	return opt
 }
 
