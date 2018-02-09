@@ -13,11 +13,11 @@ var gzipBuffers = sync.Pool{
 }
 
 func getGzip(w io.Writer) *gzip.Writer {
-	g := gzipBuffers.Get().(*gzip.Writer)
-	g.Reset(w)
-	return g
+	gz := gzipBuffers.Get().(*gzip.Writer)
+	gz.Reset(w)
+	return gz
 }
 
-func putGzip(g *gzip.Writer) {
-	gzipBuffers.Put(g)
+func putGzip(gz *gzip.Writer) {
+	gzipBuffers.Put(gz)
 }
