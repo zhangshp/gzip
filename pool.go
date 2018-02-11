@@ -6,18 +6,21 @@ import (
 	"sync"
 )
 
-var gzipBuffers = sync.Pool{
-	New: func() interface{} {
-		return new(gzip.Writer)
-	},
-}
+var (
+	gzipBuffers sync.Pool
+)
 
-func getGzip(w io.Writer) *gzip.Writer {
-	gz := gzipBuffers.Get().(*gzip.Writer)
-	gz.Reset(w)
-	return gz
+func getGzip(dst io.Writer) (w *gzip.Writer) {
+	if gz := gzipBuffers.Get(); gz != nil {
+		w = gz.(*gzip.Writer)
+		w.Reset(dst)
+	} else {
+		w, _ = gzip.NewWriterLevel(dst, gzip.BestCompression)
+	}
+	return
 }
 
 func putGzip(gz *gzip.Writer) {
+	gz.Close()
 	gzipBuffers.Put(gz)
 }
