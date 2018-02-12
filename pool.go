@@ -10,12 +10,12 @@ var (
 	gzipBuffers sync.Pool
 )
 
-func getGzip(dst io.Writer) (w *gzip.Writer) {
+func getGzip(dst io.Writer, level int) (w *gzip.Writer) {
 	if gz := gzipBuffers.Get(); gz != nil {
 		w = gz.(*gzip.Writer)
 		w.Reset(dst)
 	} else {
-		w, _ = gzip.NewWriterLevel(dst, gzip.BestCompression)
+		w, _ = gzip.NewWriterLevel(dst, level)
 	}
 	return
 }

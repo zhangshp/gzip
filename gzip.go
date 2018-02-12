@@ -31,7 +31,7 @@ var serveGzip = func(w http.ResponseWriter, r *http.Request, c martini.Context, 
 	headers.Set(HeaderContentEncoding, "gzip")
 	headers.Set(HeaderVary, HeaderAcceptEncoding)
 
-	gz := getGzip(w)
+	gz := getGzip(w, options.CompressionLevel)
 	defer putGzip(gz)
 
 	gzw := gzipResponseWriter{gz, w.(martini.ResponseWriter)}
